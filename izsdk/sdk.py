@@ -23,7 +23,7 @@ class Sdk:
         await self.connection_pool.connect()
         set_connection(self.connection_pool)
 
-    async def sign_in(self, pin: Optional[str],token_path: Optional[str]):
+    async def sign_in(self, pin: Optional[str] = None, token_path: Optional[str] = None):
         if not token_path:
             token_path = os.environ.get("TOKEN_PATH") or None
         if not token_path:
@@ -34,9 +34,11 @@ class Sdk:
         if not pin:
             raise ValueError("PIN must be provided either via environment variable IZ_PIN or pin argument.")
         return await sign_in_with_token(token, pin=pin)
-    async def get_root_folder(self):
-        return Folder.get_root()
-    async def get_file(self,path):
-        return File.init_from_path(path)
+    def get_root_folder(self,flags=None):
+        return Folder.get_root(flags=flags)
+    async def get_file(self,path,flags=None):
+        file = File(path=path, flags=flags)
+        file.init_from_path()
+        return file
     async def close(self):
         await close_connection_pool()

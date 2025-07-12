@@ -6,7 +6,7 @@ from .Folder import Folder
 
 class Item:
     @staticmethod
-    async def get_item(self, path: str, trashed: bool=False,flags=None):
+    async def get_item( path: str, trashed: bool=False,flags=None):
         pool = get_connection_pool()
         req = request.Request(
             getMetaFromPath=request.GetMetaFromPath(
@@ -59,6 +59,7 @@ class Item:
             folder = Folder(flags=flags)
             folder.folder_name = folder_meta.name or ""
             folder.parent_path= parent_path
+            folder.path = folder.parent_path + "/" + folder.folder_name
             folder.creation_date= folder_meta.creationDate if isinstance(folder_meta.creationDate, int) else folder_meta.creationDate.ToInt()
             folder.page_token= None
             folder.current_page=-1

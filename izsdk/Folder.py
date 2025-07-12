@@ -26,13 +26,14 @@ class Folder(PermissionMixin):
             self.parent_path = path[:path.rfind("/")]
 
     @staticmethod
-    def get_root():
+    def get_root(flags=None)-> 'Folder':
         root = Folder()
-        root.folder_name = "/"
-        root.parent_path = ""
+        root.folder_name = ""
+        root.parent_path = "/"
         root.creation_date = 0
         root.last_modified_date = 0
         root.page_token = None
+        root.flags=flags
         root.current_page = -1
         root.owner = ""
         root.order_by = 0
