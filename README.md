@@ -1,1 +1,1 @@
-# iz-python
+# Python SDK for Induzio
