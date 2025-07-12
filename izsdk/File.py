@@ -219,7 +219,6 @@ class File(PermissionMixin):
 
     async def copy(self, folder, new_name: Optional[str] = None):
         self._check_permission("copy")
-        self._check_permission("copy")
         new_path = folder.path
         if not new_path.endswith("/"):
             new_path += "/"
@@ -316,6 +315,7 @@ class File(PermissionMixin):
         resp = await pool.send_and_receive(req)
         if resp.resetVersion.status != 0:
             raise Exception(f"Reset file version failed with status {resp.resetVersion.status}")
+        return True
 
     async def list_versions(self):
         self._check_permission("list_versions")
@@ -428,7 +428,7 @@ class File(PermissionMixin):
         await loop.run_in_executor(None, read_and_upload)
 
         await self._finalize_write(version_uuid=version_uuid, file_size=len(buffer))
-        return "Success"
+        return True
         
     async def upload_file(self, file_path):
         self._check_permission("upload")
@@ -466,7 +466,7 @@ class File(PermissionMixin):
                 future.result()
         await loop.run_in_executor(None, read_and_upload)
         await self._finalize_write(version_uuid=version_uuid, file_size=file_size)
-        return "Success"
+        return True
 
     async def get_writer(self):
         return await FileUploadStream.create(self)
@@ -522,7 +522,7 @@ class File(PermissionMixin):
                 executor.map(download_chunk_sync, offsets)
 
         await loop.run_in_executor(None, download_and_write)
-        return "Download successful"
+        return True
     async def download_buffer(self):
         self._check_permission("download")
         pool = get_connection_pool()

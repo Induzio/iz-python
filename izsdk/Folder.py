@@ -31,6 +31,7 @@ class Folder(PermissionMixin):
         root.folder_name = ""
         root.parent_path = "/"
         root.creation_date = 0
+        root.path = "/"
         root.last_modified_date = 0
         root.page_token = None
         root.flags=flags
@@ -45,7 +46,7 @@ class Folder(PermissionMixin):
         self.owner = meta.owner or ""
 
     def create_file(self, file_name: str) -> 'File':
-        parent_path = self.parent_path
+        parent_path = self.path
         file = File(flags=["create"])
         file.file_name = file_name
         file.parent_path = parent_path
@@ -71,9 +72,10 @@ class Folder(PermissionMixin):
         folder = Folder()
         folder.folder_name = folder_name
         folder.parent_path = parent_path
+        folder.path = f"{parent_path}/{folder_name}".rstrip("/")
         folder.creation_date = int(datetime.now().timestamp())
         folder.last_modified_date = folder.creation_date
-        return True
+        return folder
 
     async def remove(self, is_perm: Optional[bool] = False) -> None:
         self._check_permission("delete")
@@ -242,6 +244,7 @@ class Folder(PermissionMixin):
                 elif item.HasField('folder_meta'):
                     folder = Folder()
                     folder.folder_name = item.folder_meta.name
+                    folder.path = f"{self.parent_path}/{self.folder_name}/{folder.folder_name}".rstrip("/")
                     folder.parent_path = f"{self.parent_path}/{self.folder_name}"
                     folder.creation_date = item.folder_meta.creationDate
                     folder.page_token = None
